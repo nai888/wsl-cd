@@ -1,21 +1,19 @@
-#!/usr/bin/env bash
-
 #=========
 # wcd.sh
 #
 # cd to a Windows directory within WSL without needing to first convert the path using wslpath
+#
+# Add this script to ~/.bashrc. Referencing this script directly won't work.
 #=========
 
-# exit on any failure
-set -e
+wcd() {
+  if [[ -z "$1" ]]; then
+    echo "Error: no directory specified. Add a path argument." >&2
+    return 1
+  fi
 
-# prevent literal globs when no matches
-shopt -s nullglob
+  local target
+  target="$(wslpath -u "$1")" || return 1
 
-# ensure argument was specified
-if [[ "$1" == "" ]]; then
-  echo "Error: no directory specified. Add a path argument."
-  exit 1
-else
-  cd "$(wslpath "$1")"
-fi
+  cd "$target"
+}
